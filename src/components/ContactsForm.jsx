@@ -3,29 +3,44 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import { collection, addDoc } from "firebase/firestore";
-import {db} from '../firebase';
+import { db } from '../firebase';
 
 const ContactsForm = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
 
-    const handleSubmit = async (e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
         //1-tikrinti laukus
+        if (name.length < 3) {
+            alert('Name cant be blank!')
+            return
+        }
+        if (email === "") {
+            alert('Email cant be blank!')
+            return
+        }
 
+        if (message.length < 5) {
+            alert('Message cant be blank!')
+            return
+        }
         //2-siusti i firestore data
         try {
             const docRef = await addDoc(collection(db, "clientsReq"), {
-              name: name,    
-              email: email,
-              client_message: message,
-              created: new Date()
+                name: name,
+                email: email,
+                client_message: message,
+                created: new Date()
             });
             console.log("Document written with ID: ", docRef.id);
-          } catch (e) {
+        } catch (e) {
             console.error("Error adding document: ", e);
-          }
+        }
+        setName('');
+        setEmail('');
+        setMessage('');
     }
     return (
         <Form onSubmit={handleSubmit}>
@@ -35,7 +50,7 @@ const ContactsForm = () => {
                     type="text"
                     placeholder="Enter your name"
                     value={name}
-                    onChange={(e)=>setName(e.target.value)} />
+                    onChange={(e) => setName(e.target.value)} />
             </Form.Group>
             <Form.Group className="mb-3">
                 <Form.Label>Email address</Form.Label>
@@ -43,7 +58,7 @@ const ContactsForm = () => {
                     type="email"
                     placeholder="name@example.com"
                     value={email}
-                    onChange={(e)=>setEmail(e.target.value)} />
+                    onChange={(e) => setEmail(e.target.value)} />
             </Form.Group>
             <Form.Group className="mb-3" >
                 <Form.Label>Example textarea</Form.Label>
@@ -51,7 +66,7 @@ const ContactsForm = () => {
                     as="textarea"
                     rows={3}
                     value={message}
-                    onChange={(e)=>setMessage(e.target.value)} />
+                    onChange={(e) => setMessage(e.target.value)} />
             </Form.Group>
             <Button variant="dark" type="submit">Dark</Button>
         </Form>
